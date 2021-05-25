@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Guia Animación</title>
+    <style>
+        body { margin: 0; }
+    </style>
+</head>
+<body>
+    <audio controls="controls"  src="./audio1.mp3" autoplay type="audio/mp3" >
+    </audio>
+<!-- Three.js library -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.115.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.115.0/examples/js/libs/inflate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.115.0/examples/js/loaders/FBXLoader.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.115.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+    const renderer = new THREE.WebGLRenderer();
+    const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
+    const scene = new THREE.Scene();
+    let Mesh;
+    let light;
+    let mixer,mixer2;
+    const clock = new THREE.Clock();
+    function init() {
+        scene.background = new THREE.Color('black');
+        camera.position.set(250, 00, 00);
+        controls = new THREE.OrbitControls( camera, renderer.domElement );
+        controls.target.set( 0, 100, 0 );
+        controls.update();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+        let loader = new THREE.TextureLoader();
+        loader.load("./Artes_Marciales_Ep.jpg", function (texture) {
+            scene.background = texture;
+        })
+    }
+
+
+
+    function loadGLTF1() {
+        const loader = new THREE.FBXLoader();
+        loader.load( 'amague.fbx', function ( object ) {
+            mixer = new THREE.AnimationMixer( object );
+            const action = mixer.clipAction( object.animations[ 0 ] );
+            action.play();
+            object.traverse( function ( child ) {
+                if ( child.isMesh ) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            } );
+            object.scale.set(0.7, 0.7, 0.7);
+            scene.add( object );
+        } );
+    }
+
+    function light_scene(){
+        let dirLight = new THREE.DirectionalLight( 0xffffff, 3 );
+        dirLight.position.set( 100, -100, -80 );
+        dirLight.position.multiplyScalar( 2000);
+        dirLight.name = "dirlight";
+        // dirLight.shadowCameraVisible = true;
+        scene.add( dirLight );
+    }
+
+    function loadGLTF2() {
+        const loader = new THREE.FBXLoader();
+        loader.load( 'Reaction.fbx', function ( object1 ) {
+            mixer2 = new THREE.AnimationMixer( object1 );
+            const action = mixer2.clipAction( object1.animations[ 0 ] );
+            action.play();
+            object1.traverse( function ( child ) {
+                if ( child.isMesh ) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            } );
+            object1.rotation.set(0,3,0)
+            object1.position.set(0,0,150);
+            object1.scale.set(0.7, 0.7, 0.7);
+            scene.add( object1 );
+        } );
+
+    }
+    function animate() {
+        requestAnimationFrame( animate );
+        const delta = clock.getDelta();
+        if ( mixer ) mixer.update( delta );
+        if ( mixer2 ) mixer2.update( delta );
+        renderer.render( scene, camera );
+    }
+
+    init();
+    loadGLTF1();
+    loadGLTF2();
+    light_scene();
+    animate();
+    
+</script>
+</body>
+</html>
