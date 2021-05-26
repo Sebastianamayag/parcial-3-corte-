@@ -7,8 +7,7 @@
     </style>
 </head>
 <body>
-    <audio controls="controls"  src="./audio1.mp3" autoplay type="audio/mp3" >
-    </audio>
+<audio loop autoplay src="./audio1.mp3" type="audio/mpeg" ></audio>
 <!-- Three.js library -->
 <script src="https://cdn.jsdelivr.net/npm/three@0.115.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.115.0/examples/js/libs/inflate.min.js"></script>
@@ -22,22 +21,30 @@
     let Mesh;
     let light;
     let mixer,mixer2;
+    var sphere;
+    var counter = 0;
+    var counter2 = 0;
     const clock = new THREE.Clock();
     function init() {
-        scene.background = new THREE.Color('black');
-        camera.position.set(250, 00, 00);
+        camera.position.set(500, 00, 00);
         controls = new THREE.OrbitControls( camera, renderer.domElement );
         controls.target.set( 0, 100, 0 );
         controls.update();
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
         let loader = new THREE.TextureLoader();
-        loader.load("./Artes_Marciales_Ep.jpg", function (texture) {
+        loader.load("./DSSuperLatino.png", function (texture) {
             scene.background = texture;
         })
     }
 
-
+    function sphere(){
+        const geometry = new THREE.SphereGeometry(1, 32, 32 );
+        const material = new THREE.MeshToonMaterial( {color: 0x0000ff} );
+        sphere = new THREE.Mesh( geometry, material );
+        sphere.position.set(-100, 50, -105);
+        scene.add( sphere );
+    }
 
     function loadGLTF1() {
         const loader = new THREE.FBXLoader();
@@ -51,6 +58,7 @@
                     child.receiveShadow = true;
                 }
             } );
+            object.position.set(0,0,-100);
             object.scale.set(0.7, 0.7, 0.7);
             scene.add( object );
         } );
@@ -78,7 +86,7 @@
                 }
             } );
             object1.rotation.set(0,3,0)
-            object1.position.set(0,0,150);
+            object1.position.set(0,0,90);
             object1.scale.set(0.7, 0.7, 0.7);
             scene.add( object1 );
         } );
@@ -89,12 +97,23 @@
         const delta = clock.getDelta();
         if ( mixer ) mixer.update( delta );
         if ( mixer2 ) mixer2.update( delta );
+        if(counter <= 30){
+            sphere.scale.set(counter, counter, counter);
+            sphere.position.set(0,0,-150 + counter2);
+        }
+        counter++;
+        counter2 = counter2 + 0.1;
+
+
+        
+
         renderer.render( scene, camera );
     }
 
     init();
     loadGLTF1();
     loadGLTF2();
+    sphere();
     light_scene();
     animate();
     
