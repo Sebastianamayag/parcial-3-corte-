@@ -65,11 +65,11 @@
     }
 
     function light_scene(){
-        let dirLight = new THREE.DirectionalLight( 0xffffff, 3 );
+        let dirLight = new THREE.HemisphereLight( 0xffffff, 3 );
         dirLight.position.set( 100, -100, -80 );
         dirLight.position.multiplyScalar( 2000);
         dirLight.name = "dirlight";
-        // dirLight.shadowCameraVisible = true;
+        dirLight.shadowCameraVisible = true;
         scene.add( dirLight );
     }
 
@@ -81,8 +81,8 @@
             action.play();
             object1.traverse( function ( child ) {
                 if ( child.isMesh ) {
-                    child.castShadow = true;
-                    child.receiveShadow = true;
+                    child.castShadow = false;
+                    child.receiveShadow = false;
                 }
             } );
             object1.rotation.set(0,3,0)
