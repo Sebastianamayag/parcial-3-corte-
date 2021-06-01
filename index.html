@@ -22,8 +22,7 @@
     let light;
     let mixer,mixer2;
     var sphere;
-    var counter = 0;
-    var counter2 = 0;
+    let counter = 0;
     const clock = new THREE.Clock();
     function init() {
         camera.position.set(500, 00, 00);
@@ -95,19 +94,30 @@
     function animate() {
         requestAnimationFrame( animate );
         const delta = clock.getDelta();
-        if ( mixer ) mixer.update( delta );
-        if ( mixer2 ) mixer2.update( delta );
-        if(counter <= 30){
-            sphere.scale.set(counter, counter, counter);
-            sphere.position.set(0,0,-150 + counter2);
+        if ( mixer ) mixer.update( delta-0.0001 );
+        if ( mixer2 ) mixer2.update( delta-0.0035 );
+        if(counter!=181){
+            henkidama();
         }
-        counter++;
-        counter2 = counter2 + 0.1;
-
-
-        
-
+        if(counter==181){
+            counter=-20;
+        }
         renderer.render( scene, camera );
+    }
+    function henkidama(){
+        let func=setTimeout(bola, 700);
+    }
+
+    function bola(){
+        if(counter <= 180){
+            sphere.position.set(0,60,-100 + counter);
+            if(counter>=0){
+                sphere.scale.set(counter/7, counter/7, counter/7);
+            }else{
+                sphere.scale.set(0, 0, 0);
+            }
+            counter++;
+        }
     }
 
     init();
