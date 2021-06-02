@@ -114,14 +114,16 @@
         const delta = clock.getDelta();
         if (mixer) mixer.update(delta - 0.0001);
         if (mixer2) mixer2.update(delta - 0.0035);
-        setTimeout(henkidama(), 1200);
+        if (counter != 181) {
+          henkidama();
+        }
         if (counter == 181) {
           counter = -20;
         }
         renderer.render(scene, camera);
       }
       function henkidama() {
-        let func = setTimeout(bola, 700);
+        let func = setTimeout(bola, 1200);
       }
 
       function bola() {
