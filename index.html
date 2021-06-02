@@ -1,132 +1,150 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Guia Animación</title>
     <style>
-        body { margin: 0; }
+      body {
+        margin: 0;
+      }
     </style>
-</head>
-<body>
-<audio loop autoplay src="./audio1.mp3" type="audio/mpeg" ></audio>
-<!-- Three.js library -->
-<script src="https://cdn.jsdelivr.net/npm/three@0.115.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.115.0/examples/js/libs/inflate.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.115.0/examples/js/loaders/FBXLoader.js"></script>
-
-<script src="https://cdn.jsdelivr.net/npm/three@0.115.0/examples/js/controls/OrbitControls.js"></script>
-<script>
-    const renderer = new THREE.WebGLRenderer();
-    const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
-    const scene = new THREE.Scene();
-    let Mesh;
-    let light;
-    let mixer,mixer2;
-    var sphere;
-    let counter = 0;
-    const clock = new THREE.Clock();
-    function init() {
+  </head>
+  <body>
+    <audio loop autoplay src="./audio1.mp3" type="audio/mpeg"></audio>
+    <!-- Three.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.115.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.115.0/examples/js/libs/inflate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.115.0/examples/js/loaders/FBXLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r92/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.115.0/examples/js/controls/OrbitControls.js"></script>
+    <script>
+      const renderer = new THREE.WebGLRenderer();
+      const camera = new THREE.PerspectiveCamera(
+        50,
+        window.innerWidth / window.innerHeight,
+        1,
+        1000
+      );
+      const scene = new THREE.Scene();
+      let Mesh;
+      let light;
+      let mixer, mixer2;
+      var sphere;
+      let counter = 0;
+      const clock = new THREE.Clock();
+      function init() {
         camera.position.set(500, 00, 00);
-        controls = new THREE.OrbitControls( camera, renderer.domElement );
-        controls.target.set( 0, 100, 0 );
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.target.set(0, 100, 0);
         controls.update();
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
         let loader = new THREE.TextureLoader();
         loader.load("./DSSuperLatino.png", function (texture) {
-            scene.background = texture;
-        })
-    }
+          scene.background = texture;
+        });
+      }
 
-    function sphere(){
-        const geometry = new THREE.SphereGeometry(1, 32, 32 );
-        const material = new THREE.MeshToonMaterial( {color: 0x0000ff} );
-        sphere = new THREE.Mesh( geometry, material );
+      function sphere() {
+        const geometry = new THREE.SphereGeometry(1, 32, 32);
+        const material = new THREE.MeshToonMaterial({ color: 0x0000ff });
+        sphere = new THREE.Mesh(geometry, material);
         sphere.position.set(-100, 50, -105);
-        scene.add( sphere );
-    }
+        scene.add(sphere);
+      }
 
-    function loadGLTF1() {
+      function loadGLTF1() {
         const loader = new THREE.FBXLoader();
-        loader.load( 'amague.fbx', function ( object ) {
-            mixer = new THREE.AnimationMixer( object );
-            const action = mixer.clipAction( object.animations[ 0 ] );
-            action.play();
-            object.traverse( function ( child ) {
-                if ( child.isMesh ) {
-                    child.castShadow = true;
-                    child.receiveShadow = true;
-                }
-            } );
-            object.position.set(0,0,-100);
-            object.scale.set(0.7, 0.7, 0.7);
-            scene.add( object );
-        } );
-    }
+        loader.load("amague.fbx", function (object) {
+          mixer = new THREE.AnimationMixer(object);
+          const action = mixer.clipAction(object.animations[0]);
+          action.play();
+          object.traverse(function (child) {
+            if (child.isMesh) {
+              child.castShadow = true;
+              child.receiveShadow = true;
+            }
+          });
+          object.position.set(0, 0, -100);
+          object.scale.set(0.7, 0.7, 0.7);
+          scene.add(object);
+        });
+      }
 
-    function light_scene(){
-        let dirLight = new THREE.HemisphereLight( 0xffffff, 3 );
-        dirLight.position.set( 100, -100, -80 );
-        dirLight.position.multiplyScalar( 2000);
+      function light_scene() {
+        let dirLight = new THREE.HemisphereLight(0xffffff, 3);
+        dirLight.position.set(100, -100, -80);
+        dirLight.position.multiplyScalar(2000);
         dirLight.name = "dirlight";
         dirLight.shadowCameraVisible = true;
-        scene.add( dirLight );
-    }
+        scene.add(dirLight);
+      }
 
-    function loadGLTF2() {
+      function loadGLTF2() {
         const loader = new THREE.FBXLoader();
-        loader.load( 'Reaction.fbx', function ( object1 ) {
-            mixer2 = new THREE.AnimationMixer( object1 );
-            const action = mixer2.clipAction( object1.animations[ 0 ] );
-            action.play();
-            object1.traverse( function ( child ) {
-                if ( child.isMesh ) {
-                    child.castShadow = false;
-                    child.receiveShadow = false;
-                }
-            } );
-            object1.rotation.set(0,3,0)
-            object1.position.set(0,0,90);
-            object1.scale.set(0.7, 0.7, 0.7);
-            scene.add( object1 );
-        } );
-
-    }
-    function animate() {
-        requestAnimationFrame( animate );
-        const delta = clock.getDelta();
-        if ( mixer ) mixer.update( delta-0.0001 );
-        if ( mixer2 ) mixer2.update( delta-0.0035 );
-        if(counter!=181){
-            henkidama();
-        }
-        if(counter==181){
-            counter=-20;
-        }
-        renderer.render( scene, camera );
-    }
-    function henkidama(){
-        let func=setTimeout(bola, 700);
-    }
-
-    function bola(){
-        if(counter <= 180){
-            sphere.position.set(0,60,-100 + counter);
-            if(counter>=0){
-                sphere.scale.set(counter/7, counter/7, counter/7);
-            }else{
-                sphere.scale.set(0, 0, 0);
+        loader.load("Reaction.fbx", function (object1) {
+          mixer2 = new THREE.AnimationMixer(object1);
+          const action = mixer2.clipAction(object1.animations[0]);
+          action.play();
+          object1.traverse(function (child) {
+            if (child.isMesh) {
+              child.castShadow = false;
+              child.receiveShadow = false;
             }
-            counter++;
+          });
+          object1.rotation.set(0, 3, 0);
+          object1.position.set(0, 0, 90);
+          object1.scale.set(0.7, 0.7, 0.7);
+          scene.add(object1);
+        });
+      }
+      function loadGLTF3() {
+        let balloonLoader = new THREE.GLTFLoader();
+        balloonLoader.load("arena-lighter.glb", (gltf) => {
+          Mesh = gltf.scene;
+          Mesh.scale.set(16, 16, 16);
+          scene.add(Mesh);
+          Mesh.rotation.set(0, 0, -13);
+          Mesh.position.x = 0;
+          Mesh.position.y = -13;
+          Mesh.position.z = -10;
+        });
+      }
+      function animate() {
+        requestAnimationFrame(animate);
+        const delta = clock.getDelta();
+        if (mixer) mixer.update(delta - 0.0001);
+        if (mixer2) mixer2.update(delta - 0.0035);
+        if (counter != 181) {
+          henkidama();
         }
-    }
+        if (counter == 181) {
+          counter = -20;
+        }
+        renderer.render(scene, camera);
+      }
+      function henkidama() {
+        let func = setTimeout(bola, 700);
+      }
 
-    init();
-    loadGLTF1();
-    loadGLTF2();
-    sphere();
-    light_scene();
-    animate();
-    
-</script>
-</body>
+      function bola() {
+        if (counter <= 180) {
+          sphere.position.set(0, 60, -100 + counter);
+          if (counter >= 0) {
+            sphere.scale.set(counter / 7, counter / 7, counter / 7);
+          } else {
+            sphere.scale.set(0, 0, 0);
+          }
+          counter++;
+        }
+      }
+
+      init();
+      loadGLTF1();
+      loadGLTF2();
+      loadGLTF3();
+      sphere();
+      light_scene();
+      animate();
+    </script>
+  </body>
 </html>
